@@ -1,0 +1,15 @@
+import sys
+import os
+
+
+
+
+
+os.system("mv /eos/uscms/store/user/skyria/SingleMuon/Run2016B-03Feb2017_ver2-v2_B2GAnaFW_80X_V3p2RUNB/171018_152617/0000/* /eos/uscms/store/user/skyria/SingleMuon/Run2016B-03Feb2017_ver2-v2_B2GAnaFW_80X_V3p2RUNB/171018_152617/")  
+os.system("mv /eos/uscms/store/user/skyria/SingleMuon/Run2016B-03Feb2017_ver2-v2_B2GAnaFW_80X_V3p2RUNB/171018_152617/0001/* /eos/uscms/store/user/skyria/SingleMuon/Run2016B-03Feb2017_ver2-v2_B2GAnaFW_80X_V3p2RUNB/171018_152617/")  
+os.system("mv /eos/uscms/store/user/skyria/SingleMuon/Run2016B-03Feb2017_ver2-v2_B2GAnaFW_80X_V3p2RUNB/171018_152617/0002/* /eos/uscms/store/user/skyria/SingleMuon/Run2016B-03Feb2017_ver2-v2_B2GAnaFW_80X_V3p2RUNB/171018_152617/")  
+os.system("mv /eos/uscms/store/user/skyria/SingleMuon/Run2016B-03Feb2017_ver2-v2_B2GAnaFW_80X_V3p2RUNB/171018_152617/0003/* /eos/uscms/store/user/skyria/SingleMuon/Run2016B-03Feb2017_ver2-v2_B2GAnaFW_80X_V3p2RUNB/171018_152617/")  
+os.system("mv /eos/uscms/store/user/skyria/SingleMuon/Run2016B-03Feb2017_ver2-v2_B2GAnaFW_80X_V3p2RUNB/171018_152617/0004/* /eos/uscms/store/user/skyria/SingleMuon/Run2016B-03Feb2017_ver2-v2_B2GAnaFW_80X_V3p2RUNB/171018_152617/")  
+os.system("mv /eos/uscms/store/user/skyria/SingleMuon/Run2016B-03Feb2017_ver2-v2_B2GAnaFW_80X_V3p2RUNB/171018_152617/0005/* /eos/uscms/store/user/skyria/SingleMuon/Run2016B-03Feb2017_ver2-v2_B2GAnaFW_80X_V3p2RUNB/171018_152617/")  
+os.system("mv /eos/uscms/store/user/skyria/SingleMuon/Run2016B-03Feb2017_ver2-v2_B2GAnaFW_80X_V3p2RUNB/171018_152617/0006/* /eos/uscms/store/user/skyria/SingleMuon/Run2016B-03Feb2017_ver2-v2_B2GAnaFW_80X_V3p2RUNB/171018_152617/")  
+os.system("mv /eos/uscms/store/user/skyria/SingleMuon/Run2016B-03Feb2017_ver2-v2_B2GAnaFW_80X_V3p2RUNB/171018_152617/0007/* /eos/uscms/store/user/skyria/SingleMuon/Run2016B-03Feb2017_ver2-v2_B2GAnaFW_80X_V3p2RUNB/171018_152617/")  

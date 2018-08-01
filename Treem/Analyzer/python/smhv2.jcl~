@@ -1,0 +1,17 @@
+universe = vanilla
+Executable = ./step1
+Requirements =
+Should_Transfer_Files =  YES
+WhenToTransferOutput = ON_EXIT
+Transfer_Input_Files = step1,ConfFile_cfg.py,TreeM.tgz
+Output = ./SMHv3/$(Process).out
+Error = ./SMHv3/$(Process).err
+Log = ./SMHv3/$(Process).log
+notify_user = skyria@FNAL.GOV
+use_x509userproxy = true
+Arguments = root://cmseos.fnal.gov//store/user/skyria/SingleMuon/Run2016H-03Feb2017_ver3-v1_B2GAnaFW_SMU/180213_060159/B2GEDMNtuple_$(Process).root root://cmseos.fnal.gov//store/user/skyria/SingleMuon/Run2016H-03Feb2017_ver3-v1_B2GAnaFW_SMU/180213_060159/Trees/$(Process)_tree.root 
+Queue 26
+
+
+
+

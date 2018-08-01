@@ -1,0 +1,18 @@
+universe = vanilla
+Executable = ./step1
+Requirements =
+Should_Transfer_Files =  YES
+WhenToTransferOutput = ON_EXIT
+Transfer_Input_Files = step1,ConfFile_cfg.py,TreeM.tgz
+Output = ./JHTG/$(Process).out
+Error = ./JHTG/$(Process).err
+Log = ./JHTG/$(Process).log
+notify_user = skyria@FNAL.GOV
+use_x509userproxy = true
+Arguments = root://cmseos.fnal.gov///eos/uscms/store/user/skyria/JetHT/Run2016G-03Feb2017-v1_B2GAnaFW_80X_NVTX/180614_221045/0000/B2GEDMNtuple_$(Process).root  root://cmseos.fnal.gov///eos/uscms/store/user/skyria/JetHT/Run2016G-03Feb2017-v1_B2GAnaFW_80X_NVTX/180614_221045/0000/Trees/$(Process)_tree.root
+Queue 6098
+
+
+
+
+

@@ -1,0 +1,45 @@
+import os
+import sys
+
+
+
+print "Failled Jobs give DATAsample"
+
+#/eos/uscms/store/user/skyria/Stealth_13/DATAD
+
+
+
+cmnd ="ls -l /eos/uscms/store/user/skyria/SMS-T7WgStealth_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv2-PUSummer16Fast_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1_B2GAnaFW_SIG/180119_215051/Trees/"+sys.argv[1]+"_tree.root > all.txt"
+
+os.system(cmnd)
+os.system("awk '$5 <1000 {print $9}' all.txt > failled.txt")
+
+print "here"
+#remove the empty files: 
+os.system("wc -l failled.txt > njob")
+filel = open("failled.txt","r")
+f = open("njob","r")
+linee  = f.readline()
+r = linee.split()
+print "r IS  " ,r[0]
+
+fileout = open("InpOut.txt","w")
+print r[0]
+fileout.write("root://cmseos.fnal.gov//store/user/skyria/Stealth_13/"+sys.argv[1]+"/Failled/\n")
+
+for i in range(0,int(r[0])):
+   linee =  filel.readline()
+   #print linee
+   rmcomnd = "rm "+linee
+   lin0 = linee.replace("_tree.root","")
+   lin1 = lin0.replace("/eos/uscms/store/user/skyria/Stealth_13/"+sys.argv[1]+"/","")
+   fileout.write("root://cmseos.fnal.gov//store/user/skyria/SingleMuon/Run2016B-03Feb2017_ver2-v2_B2GAnaFW_80X_V3p2RUNB/171018_152617/B2GEDMNtuple_"+lin1.strip("\n")+".root\n")
+   os.system(rmcomnd)
+
+
+#Now submit all these bad jobs
+
+
+
+
+

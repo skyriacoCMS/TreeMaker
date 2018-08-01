@@ -1,0 +1,16 @@
+universe = vanilla
+Executable = ./step1
+Requirements =
+Should_Transfer_Files =  YES
+WhenToTransferOutput = ON_EXIT
+Transfer_Input_Files = step1,ConfFile_cfg.py,TreeM.tgz
+Output = ./QCDHT152ext/$(Process).out
+Error = ./QCDHT152ext/$(Process).err
+Log = ./QCDHT152ext/$(Process).log
+notify_user = skyria@FNAL.GOV
+use_x509userproxy = true
+Arguments = root://cmseos.fnal.gov///eos/uscms/store/user/skyria/QCD_HT1500to2000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1_B2GAnaFW_QCDext/180604_163743/B2GEDMNtuple_$(Process).root root://cmseos.fnal.gov///eos/uscms/store/user/skyria/QCD_HT1500to2000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1_B2GAnaFW_QCDext/180604_163743/Trees/$(Process)_tree.root 
+Queue 821
+
+
+

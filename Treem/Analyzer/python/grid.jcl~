@@ -1,0 +1,18 @@
+universe = vanilla
+Executable = ./step1
+Requirements =
+Should_Transfer_Files =  YES
+WhenToTransferOutput = ON_EXIT
+Transfer_Input_Files =  
+Output = ./grd/$(Process).out
+Error = ./grd/$(Process).err
+Log = ./grd/$(Process).log
+notify_user = skyria@FNAL.GOV
+use_x509userproxy = true
+Arguments = root://cmseos.fnal.gov///eos/uscms/store/group/lpcrutgers/skyria/FULLSIM/ntuple_$(Process).root ./output_$(Process).root root://cmseos.fnal.gov///eos/uscms/store/group/lpcrutgers/skyria/FULLSIM/Trees/$(Process)_tree.root
+
+Queue 200
+
+
+
+

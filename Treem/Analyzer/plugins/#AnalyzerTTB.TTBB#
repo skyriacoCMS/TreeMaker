@@ -1,0 +1,1795 @@
+// -*- C++ -*-
+//
+// Package:    Treem/Analyzer
+// Class:      Analyzer
+// 
+/**\class Analyzer Analyzer.cc Treem/Analyzer/plugins/Analyzer.cc
+
+ Description: [one line class summary]
+
+ Implementation:
+     [Notes on implementation]
+*/
+//
+// Original Author:  savvas kyriacou
+//         Created:  Fri, 13 Jan 2017 10:37:16 GMT
+//
+//
+
+
+// system include files
+#include <memory>
+
+// user include files
+#include "FWCore/Framework/interface/Frameworkfwd.h"
+#include "FWCore/Framework/interface/one/EDAnalyzer.h"
+
+#include "FWCore/Framework/interface/Event.h"
+#include "FWCore/Framework/interface/MakerMacros.h"
+
+#include "FWCore/ParameterSet/interface/ParameterSet.h"
+#include "FWCore/MessageLogger/interface/MessageLogger.h"
+
+#include "FWCore/ServiceRegistry/interface/Service.h"
+#include "CommonTools/UtilAlgos/interface/TFileService.h"
+#include "TH1.h"
+#include "TH2.h"
+#include "TLorentzVector.h"
+#include "cstdlib"
+#include "iostream"
+#include "TTree.h"
+#include <memory>
+#include "DataFormats/Math/interface/deltaR.h"
+#include "DataFormats/HepMCCandidate/interface/GenParticle.h"
+
+
+//
+// class declaration
+//
+
+// If the analyzer does not use TFileService, please remove
+// the template argument to the base class so the class inherits
+// from  edm::one::EDAnalyzer<> and also remove the line from
+// constructor "usesResource("TFileService");"
+// This will improve performance in multithreaded jobs.
+
+
+using namespace std;
+using namespace edm;
+
+
+class Analyzer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
+   public:
+      explicit Analyzer(const edm::ParameterSet&);
+      ~Analyzer();
+
+      static void fillDescriptions(edm::ConfigurationDescriptions& descriptions);
+
+
+   private:
+      virtual void beginJob() override;
+      virtual void analyze(const edm::Event&, const edm::EventSetup&) override;
+      virtual void endJob() override;
+      bool JetIsLoose(float,int,int,float,float,float);
+      bool JetIsTight(float,int,int,float,float,float,float);
+      bool PassJetID( float,float,float,int,float,int,float,int);
+
+
+ 
+
+
+  edm::EDGetTokenT<double> rhoToken_;
+
+  edm::EDGetTokenT<reco::GenParticleCollection> genpartsToken_; //  (consumes<reco::GenParticleCollection>(edm::InputTag("prunedGenParticles")));
+  
+
+  edm::EDGetTokenT< vector<float> >  ak8etaCToken_;
+  edm::EDGetTokenT< vector<float> >  ak8phiCToken_;
+  edm::EDGetTokenT< vector<float> >  ak8eneCToken_;
+  edm::EDGetTokenT< vector<float> >  ak8ptCToken_;
+  edm::EDGetTokenT< vector<float> >  ak8t1CToken_;
+  edm::EDGetTokenT< vector<float> >  ak8t3CToken_;
+  edm::EDGetTokenT< vector<float> >  ak8sfmassCToken_;
+  edm::EDGetTokenT< vector<float> >  ak8prmassCToken_;
+
+  edm::EDGetTokenT< vector<float> > ak8CcefToken_;
+  edm::EDGetTokenT< vector<float> > ak8CchfToken_;
+  edm::EDGetTokenT< vector<float> > ak8CchmToken_;
+  edm::EDGetTokenT< vector<float> > ak8CnmToken_;
+  edm::EDGetTokenT< vector<float> > ak8CchemfToken_;
+  edm::EDGetTokenT< vector<float> > ak8Cjecf0Token_;
+  edm::EDGetTokenT< vector<float> > ak8CjecL3absToken_;
+  edm::EDGetTokenT< vector<float> > ak8CjecUncertToken_;
+  edm::EDGetTokenT< vector<float> > ak8CareaToken_;
+  edm::EDGetTokenT< vector<float> > ak8CnemfToken_;
+  edm::EDGetTokenT< vector<float> > ak8CnhfToken_;
+  edm::EDGetTokenT< vector<float> > ak8CnnpToken_;
+
+  /*
+  edm::EDGetTokenT< vector<float> >  ak8etaPToken_;
+  edm::EDGetTokenT< vector<float> >  ak8phiPToken_;
+  edm::EDGetTokenT< vector<float> >  ak8enePToken_;
+  edm::EDGetTokenT< vector<float> >  ak8ptPToken_;
+  edm::EDGetTokenT< vector<float> >  ak8t1PToken_;
+  edm::EDGetTokenT< vector<float> >  ak8t3PToken_;
+  edm::EDGetTokenT< vector<float> >  ak8sfmassPToken_;
+  edm::EDGetTokenT< vector<float> >  ak8prmassPToken_;
+
+  edm::EDGetTokenT< vector<float> > ak8PcefToken_;
+  edm::EDGetTokenT< vector<float> > ak8PchfToken_;
+  edm::EDGetTokenT< vector<float> > ak8PchmToken_;
+  edm::EDGetTokenT< vector<float> > ak8PnmToken_;
+  edm::EDGetTokenT< vector<float> > ak8PchemfToken_;
+  edm::EDGetTokenT< vector<float> > ak8Pjecf0Token_;
+  edm::EDGetTokenT< vector<float> > ak8PjecL3absToken_;
+  edm::EDGetTokenT< vector<float> > ak8PjecUncertToken_;
+  edm::EDGetTokenT< vector<float> > ak8PareaToken_;
+  edm::EDGetTokenT< vector<float> > ak8PnemfToken_;
+  edm::EDGetTokenT< vector<float> > ak8PnhfToken_;
+  edm::EDGetTokenT< vector<float> > ak8PnnpToken_;
+  */
+
+  //  edm::EDGetTokenT< vector<float> >   ak8phojetindxToken_;
+  edm::EDGetTokenT< vector<float> >   ak8phoindxCToken_;
+  edm::EDGetTokenT< vector<float> >   ak8phosubjfCToken_;
+  edm::EDGetTokenT< vector<float> >   ak8subindxCToken_;
+
+  edm::EDGetTokenT< vector<float> >   ak8phoindxPToken_;
+  edm::EDGetTokenT< vector<float> >   ak8phosubjfPToken_;
+ 
+  edm::EDGetTokenT< vector<float> >   ak8subeta1Token_;
+  edm::EDGetTokenT< vector<float> >   ak8subphi1Token_;
+  edm::EDGetTokenT< vector<float> >   ak8subpt1Token_;
+
+  edm::EDGetTokenT< vector<float> >   ak8subeta2Token_;
+  edm::EDGetTokenT< vector<float> >   ak8subphi2Token_;
+  edm::EDGetTokenT< vector<float> >   ak8subpt2Token_;
+
+  edm::EDGetTokenT< vector<float> >   ak8subeta3Token_;
+  edm::EDGetTokenT< vector<float> >   ak8subphi3Token_;
+  edm::EDGetTokenT< vector<float> >   ak8subpt3Token_;
+ 
+
+
+
+
+  edm::EDGetTokenT< vector<float> >  ak4ptCToken_;
+  edm::EDGetTokenT< vector<float> >  ak4etaCToken_;
+  edm::EDGetTokenT< vector<float> >  ak4phiCToken_;
+  edm::EDGetTokenT< vector<float> >  ak4eneCToken_;
+  edm::EDGetTokenT< vector<float> >  ak4CSVv2CToken_;
+
+  edm::EDGetTokenT< vector<float> > ak4CcefToken_;
+  edm::EDGetTokenT< vector<float> > ak4CchfToken_;
+  edm::EDGetTokenT< vector<float> > ak4CchmToken_;
+  edm::EDGetTokenT< vector<float> > ak4CnmToken_;
+  edm::EDGetTokenT< vector<float> > ak4CchemfToken_;
+  edm::EDGetTokenT< vector<float> > ak4Cjecf0Token_;
+  edm::EDGetTokenT< vector<float> > ak4CjecL3absToken_;
+  edm::EDGetTokenT< vector<float> > ak4CjecUncertToken_;
+  edm::EDGetTokenT< vector<float> > ak4CareaToken_;
+  edm::EDGetTokenT< vector<float> > ak4CnemfToken_;
+  edm::EDGetTokenT< vector<float> > ak4CnhfToken_;
+  edm::EDGetTokenT< vector<float> > ak4CnnpToken_;
+
+  edm::EDGetTokenT< vector<float> >  phoptToken_;
+  edm::EDGetTokenT< vector<float> >  phoEToken_;
+  edm::EDGetTokenT< vector<float> >  phoetaToken_;
+  edm::EDGetTokenT< vector<float> >  phophiToken_;
+  edm::EDGetTokenT< vector<float> >  phohoeToken_;
+  edm::EDGetTokenT< vector<float> >  phosieieToken_;
+  edm::EDGetTokenT< vector<float>   >  phohaspixelseedToken_;
+
+  //-----------------------------------------------------------
+
+  edm::EDGetTokenT< vector<float>   > ak8spt1PToken_; 
+  edm::EDGetTokenT< vector<float>   > ak8spt2PToken_; 
+  edm::EDGetTokenT< vector<float>   > ak8spt3PToken_; 
+
+
+  //----------------------------------------------------------
+
+  edm::EDGetTokenT< vector<float> > muonIsTightToken_;
+  edm::EDGetTokenT< vector<float> > muonptToken_;
+  edm::EDGetTokenT< vector<float> > muonetaToken_;
+  edm::EDGetTokenT< vector<float> > muonPhiToken_;
+  edm::EDGetTokenT< vector<float> > muonEToken_;
+  edm::EDGetTokenT< vector<float> > muonisGlobalToken_;
+  edm::EDGetTokenT< vector<float> > muonIso04Token_;
+  edm::EDGetTokenT< vector<float> > muonIsPFToken_;
+
+
+  edm::EDGetTokenT< vector<float> > metfullptToken_;
+  edm::EDGetTokenT< vector<float> > metfullphiToken_;
+
+  edm::EDGetTokenT< vector<float> > metpuppiptToken_;
+  edm::EDGetTokenT< vector<float> > metpuppiphiToken_;
+
+
+  //  edm::EDGetTokenT< vector<vector <int> >  > electronkeysToken_; 
+  // edm::EDGetTokenT< vector<float> >          electronptToken_; 
+
+
+  TTree *event; 
+  //event info
+  double rho   = -99; 
+  float HTak4 = 0; 
+  int NJ = 0; 
+  int isdgam = 0; 
+  
+  float mcglumass = -1; 
+  float mcchimass = -1; 
+  
+  //Jets
+  vector<float> ak8etaC; 
+  vector<float> ak8phiC; 
+  vector<float> ak8ptC; 
+  vector<float> ak8eneC; 
+  vector<float> ak8sfMassC;
+  vector<float> ak8prMassC;
+  vector<float> ak8t3t1C;
+  vector<float> ak8subjC;
+  vector<float> ak8phoindxC;
+  vector<float> ak8subindxC;
+ 
+
+
+  
+
+
+  /*
+  vector<int>   ak8hasphoC;
+  vector<float> ak8phosubjC;
+  vector<float> ak8phosieC;
+  vector<float> ak8phoptC;
+  vector<float> ak8phoetaC;
+  vector<float> ak8phohoeC;
+  vector<float> ak8phoseedC;
+  vector<int>   ak8isLooseC;
+  vector<int>   ak8isTightC;  
+  */
+  vector<float> ak8seta1; 
+  vector<float> ak8seta2; 
+  vector<float> ak8seta3; 
+  vector<float> ak8sphi1; 
+  vector<float> ak8sphi2; 
+  vector<float> ak8sphi3; 
+  vector<float> ak8spt1; 
+  vector<float> ak8spt2; 
+  vector<float> ak8spt3; 
+ 
+
+  
+
+
+
+  // vector<float> elept; 
+  //vector<vector<int > > elekeys; 
+  /* 
+  vector<float> ak8etaP; 
+  vector<float> ak8phiP; 
+  vector<float> ak8ptP; 
+  vector<float> ak8eneP; 
+  vector<float> ak8t3t1P;
+  vector<float> ak8sfMassP;
+  vector<float> ak8prMassP;
+  vector<float> ak8subjP;
+  vector<int>   ak8phoindxP;
+  vector<float> ak8MassP;
+  */
+
+
+ 
+  
+  vector<float> ak4ptC;
+  vector<float> ak4etaC;
+  vector<float> ak4phiC;
+  vector<float> ak4eneC;
+  vector<float> ak4CSVv2C;
+
+  vector<float> mcelept; 
+  vector<float> mcelephi; 
+  vector<float> mceleeta; 
+
+  vector<float> mctoppt; 
+  vector<float> mctopphi; 
+  vector<float> mctopeta; 
+  
+  vector<float> mcmuonpt; 
+  vector<float> mcmuonphi; 
+  vector<float> mcmuoneta; 
+  
+  /*
+  vector<float> mcphopt; 
+  vector<float> mcphophi; 
+  vector<float> mcphoeta; 
+
+  vector<float> mcchipt; 
+  vector<float> mcchiphi; 
+  vector<float> mcchieta; 
+  */
+  
+
+
+  //Photons
+  vector<float> phopt;
+  vector<float> phoE;
+  vector<float> phoeta;
+  vector<float> phophi;
+  vector<float> phohoe;
+  vector<float> phosieie;
+  vector<float> phohaspixelseed;
+
+  vector<float> muonpt;
+  vector<float> muoneta;
+  vector<float> muonphi;
+  vector<float> muone;
+  vector<float> muonisglobal;
+  vector<float> muoniso04;
+  vector<float> muonisPF;
+  vector<float> muonisTight;
+
+  vector<float> metpuppiphi; 
+  vector<float> metpuppipt;
+  vector<float> metfullphi; 
+  vector<float> metfullpt;
+
+
+
+  //GenInfo -has to be added - 
+
+
+
+  
+
+
+
+      // ----------member data ---------------------------
+};
+
+//
+// constants, enums and typedefs
+//
+
+//
+// static data member definitions
+//
+
+//
+// constructors and destructor
+//
+Analyzer::Analyzer(const edm::ParameterSet& iConfig)
+
+{
+   //now do what ever initialization is needed
+  //   usesResource("TFileService");
+
+
+
+  Service<TFileService> fs; 
+
+  event = fs->make<TTree>("event","");
+
+  //consumes
+
+  rhoToken_ = consumes<double>( iConfig.getParameter<InputTag>("rhotag"));
+
+  genpartsToken_ = consumes< reco::GenParticleCollection >( iConfig.getParameter<InputTag>("genparticlestag"));  
+
+
+  ak8etaCToken_    = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8etaCtag"));
+  ak8phiCToken_    = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8phiCtag"));
+  ak8eneCToken_    = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8eneCtag"));
+  ak8ptCToken_     = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8ptCtag"));
+  ak8t1CToken_     = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8t1Ctag"));
+  ak8t3CToken_     = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8t3Ctag"));
+  ak8sfmassCToken_ = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8sfmassCtag"));
+  ak8prmassCToken_ = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8prmassCtag"));
+
+  ak8CcefToken_    = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8Cceftag"));
+  ak8CchfToken_    = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8Cchftag"));
+  ak8CchmToken_    = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8Cchmtag"));
+  ak8CnmToken_     = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8Cnmtag"));
+  ak8CchemfToken_    = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8Cchemftag"));
+  ak8Cjecf0Token_    = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8Cjecf0tag"));
+  ak8CjecL3absToken_    = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8CjecL3abstag"));
+  ak8CjecUncertToken_    = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8CjecUncerttag"));
+  ak8CareaToken_    = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8Careatag"));   
+  ak8CnemfToken_    = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8Cnemftag"));
+  ak8CnhfToken_    = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8Cnhftag"));
+  ak8CnnpToken_    = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8Cnnptag"));
+  
+  /*
+  ak8etaPToken_    = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8etaPtag"));
+  ak8phiPToken_    = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8phiPtag"));
+  ak8enePToken_    = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8enePtag"));
+  ak8ptPToken_     = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8ptPtag"));
+  ak8t1PToken_     = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8t1Ptag"));
+  ak8t3PToken_     = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8t3Ptag"));
+  ak8sfmassPToken_ = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8sfmassPtag"));
+  ak8prmassPToken_ = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8prmassPtag"));
+
+
+  ak8PcefToken_    = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8Pceftag"));
+  ak8PchfToken_    = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8Pchftag"));
+  ak8PchmToken_    = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8Pchmtag"));
+  ak8PnmToken_     = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8Pnmtag"));
+  ak8PchemfToken_    = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8Pchemftag"));
+  ak8Pjecf0Token_    = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8Pjecf0tag"));
+  ak8PjecL3absToken_    = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8PjecL3abstag"));
+  ak8PjecUncertToken_    = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8PjecUncerttag"));
+  ak8PareaToken_    = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8Pareatag"));   
+  ak8PnemfToken_    = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8Pnemftag"));
+  ak8PnhfToken_    = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8Pnhftag"));
+  ak8PnnpToken_    = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8Pnnptag"));
+  */
+
+
+  //  ak8phojetindxToken_  = consumes< vector<float > >( iConfig.getParameter<InputTag>("ak8phojetindxtag"));
+  ak8phoindxCToken_ = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8phoindxCtag"));
+  ak8phosubjfCToken_ = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8phosubjfCtag"));
+  ak8subindxCToken_ = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8subindxCtag"));
+
+  //  ak8phoindxPToken_ = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8phoindxPtag"));
+  //ak8phosubjfPToken_ = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8phosubjfPtag"));
+
+  
+  ak8subeta1Token_ = consumes< vector <float> >( iConfig.getParameter<InputTag>("ak8subeta1tag"));
+  ak8subphi1Token_ = consumes< vector <float> >( iConfig.getParameter<InputTag>("ak8subphi1tag"));
+  ak8subpt1Token_  = consumes< vector <float> >( iConfig.getParameter<InputTag>("ak8subpt1tag"));
+
+  ak8subeta2Token_ = consumes< vector <float> >( iConfig.getParameter<InputTag>("ak8subeta2tag"));
+  ak8subphi2Token_ = consumes< vector <float> >( iConfig.getParameter<InputTag>("ak8subphi2tag"));
+  ak8subpt2Token_  = consumes< vector <float> >( iConfig.getParameter<InputTag>("ak8subpt2tag"));
+ 
+  ak8subeta3Token_ = consumes< vector <float> >( iConfig.getParameter<InputTag>("ak8subeta3tag"));
+  ak8subphi3Token_ = consumes< vector <float> >( iConfig.getParameter<InputTag>("ak8subphi3tag"));
+  ak8subpt3Token_  = consumes< vector <float> >( iConfig.getParameter<InputTag>("ak8subpt3tag"));
+  
+  
+
+  ak4ptCToken_     = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak4ptCtag"));
+  ak4etaCToken_    = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak4etaCtag"));
+  ak4phiCToken_    = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak4phiCtag"));
+  ak4eneCToken_    = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak4eneCtag"));
+  ak4CSVv2CToken_  = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak4CSVv2Ctag"));
+
+
+
+
+  /*
+  ak8spt1PToken_ = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8spt1Ptag")); 
+  ak8spt2PToken_ = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8spt2Ptag")); 
+  ak8spt3PToken_ = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8spt3Ptag")); 
+
+  ak8subpt0exPToken_ = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8subpt0exPtag"));;
+  ak8subpt1exPToken_ = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8subpt1exPtag"));;
+  ak8subpt2exPToken_ = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak8subpt2exPtag"));;
+
+  subindxexPToken_ = consumes< vector<float> >( iConfig.getParameter<InputTag>("subindxexPtag"));; 
+  phoindxexPToken_ = consumes< vector<float> >( iConfig.getParameter<InputTag>("phoindxexPtag"));; 
+  subjfexPToken_ = consumes< vector<float> >( iConfig.getParameter<InputTag>("subjfexPtag"));; 
+  */
+
+
+
+  ak4CcefToken_    = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak4Cceftag"));
+  ak4CchfToken_    = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak4Cchftag"));
+  ak4CchmToken_    = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak4Cchmtag"));
+  ak4CnmToken_     = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak4Cnmtag"));
+  ak4CchemfToken_    = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak4Cchemftag"));
+  ak4Cjecf0Token_    = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak4Cjecf0tag"));
+  ak4CjecL3absToken_    = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak4CjecL3abstag"));
+  ak4CjecUncertToken_    = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak4CjecUncerttag"));
+  ak4CareaToken_    = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak4Careatag"));   
+  ak4CnemfToken_    = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak4Cnemftag"));
+  ak4CnhfToken_    = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak4Cnhftag"));
+  ak4CnnpToken_    = consumes< vector<float> >( iConfig.getParameter<InputTag>("ak4Cnnptag"));
+   
+  phoptToken_      = consumes< vector<float> >( iConfig.getParameter<InputTag>("phopttag"));
+  phoEToken_       = consumes< vector<float> >( iConfig.getParameter<InputTag>("phoEtag"));
+  phoetaToken_     = consumes< vector<float> >( iConfig.getParameter<InputTag>("phoetatag"));
+  phophiToken_     = consumes< vector<float> >( iConfig.getParameter<InputTag>("phophitag"));
+  phohoeToken_     = consumes< vector<float> >( iConfig.getParameter<InputTag>("phohoetag"));
+  phosieieToken_     = consumes< vector<float> >( iConfig.getParameter<InputTag>("phosieietag"));
+  phohaspixelseedToken_ = consumes< vector<float> >( iConfig.getParameter<InputTag>("phohaspixelseedtag"));
+
+  //  electronptToken_   = consumes<vector<float> >(iConfig.getParameter<InputTag>("electronpttag"));  
+  //electronkeysToken_ = consumes<vector<vector<int> >( iConfig.getParameter<InputTag>("electronkeystag")); 
+
+  muonptToken_ = consumes< vector<float> >( iConfig.getParameter<InputTag>("mupttag"));
+
+  muonetaToken_ = consumes< vector<float> >( iConfig.getParameter<InputTag>("muetatag"));
+
+  muonPhiToken_ = consumes< vector<float> >( iConfig.getParameter<InputTag>("muphitag"));
+
+  muonEToken_ = consumes< vector<float> >( iConfig.getParameter<InputTag>("muetag"));
+  muonisGlobalToken_ = consumes< vector<float> >( iConfig.getParameter<InputTag>("muisGlobaltag"));
+  muonIso04Token_ = consumes< vector<float> >( iConfig.getParameter<InputTag>("muIso04tag"));
+  muonIsPFToken_ = consumes< vector<float> >( iConfig.getParameter<InputTag>("muisPFtag"));
+  muonIsTightToken_ = consumes< vector<float> >( iConfig.getParameter<InputTag>("muisTighttag"));
+
+
+  metfullptToken_ = consumes< vector<float> >( iConfig.getParameter<InputTag>("metfullpttag"));
+  metfullphiToken_ = consumes< vector<float> >( iConfig.getParameter<InputTag>("metfullphitag"));
+
+  metpuppiptToken_ = consumes< vector<float> >( iConfig.getParameter<InputTag>("metpuppipttag"));
+  metpuppiphiToken_ = consumes< vector<float> >( iConfig.getParameter<InputTag>("metpuppiphitag"));
+
+
+
+  //Tree branches
+  event->Branch("rho",&rho,"rho/F");
+  event->Branch("HTak4",&HTak4,"HTak4/F");
+  event->Branch("NJ",&NJ,"NJ/I");
+  event->Branch("mcglumass",&mcglumass,"mcglumass/F");
+  event->Branch("mcchimass",&mcchimass,"mcchimass/F");
+
+  event->Branch("ak8etaC",&ak8etaC); 
+  event->Branch("ak8phiC",&ak8phiC); 
+  event->Branch("ak8ptC",&ak8ptC); 
+  event->Branch("ak8eneC",&ak8eneC);
+  event->Branch("ak8sfMassC",&ak8sfMassC);
+  event->Branch("ak8prMassC",&ak8prMassC);
+  event->Branch("ak8t3t1C",&ak8t3t1C);  
+  event->Branch("ak8subjC",&ak8subjC);
+  event->Branch("ak8phoindxC",&ak8phoindxC);
+  event->Branch("ak8subindxC",&ak8subindxC);
+
+  /*
+  event->Branch("ak8hasphoC",&ak8hasphoC);
+  event->Branch("ak8phosubjC",&ak8phosubjC);
+  event->Branch("ak8phosieC",&ak8phosieC);
+  event->Branch("ak8phoptC",&ak8phoptC);
+  event->Branch("ak8phoetaC",&ak8phoetaC);
+  event->Branch("ak8phohoeC",&ak8phohoeC);
+  event->Branch("ak8phoseedC",&ak8phoseedC);
+  event->Branch("ak8isLooseC",&ak8isLooseC);
+  event->Branch("ak8isTightC",&ak8isTightC);
+  */ 
+  event->Branch("ak8seta1",&ak8seta1);  
+  event->Branch("ak8seta2",&ak8seta2); 
+  event->Branch("ak8seta3",&ak8seta3); 
+  event->Branch("ak8sphi",&ak8sphi1); 
+  event->Branch("ak8sphi2",&ak8sphi2); 
+  event->Branch("ak8sphi3",&ak8sphi3); 
+  event->Branch("ak8spt1",&ak8spt1); 
+  event->Branch("ak8spt2",&ak8spt2); 
+  event->Branch("ak8spt3",&ak8spt3); 
+  
+  /*
+  event->Branch("ak8etaP",&ak8etaP); 
+  event->Branch("ak8phiP",&ak8phiP); 
+  event->Branch("ak8ptP",&ak8ptP); 
+  event->Branch("ak8eneP",&ak8eneP); 
+  event->Branch("ak8sfMassP",&ak8sfMassP);
+  event->Branch("ak8prMassP",&ak8prMassP);
+  event->Branch("ak8t3t1P",&ak8t3t1P);  
+  event->Branch("ak8subjP",&ak8subjP);
+  event->Branch("ak8phoindxP",&ak8phoindxP);
+
+  event->Branch("ak8spt1P",&ak8spt1P); 
+  event->Branch("ak8spt2P",&ak8spt2P); 
+  event->Branch("ak8spt3P",&ak8spt3P); 
+
+  event->Branch("ak8subpt0exP",&ak8subpt0exP);
+  event->Branch("ak8subpt1exP",&ak8subpt1exP);
+  event->Branch("ak8subpt2exP",&ak8subpt2exP);
+  event->Branch("subindxexP",&subindxexP); 
+  event->Branch("phoindxexP",&phoindxexP); 
+  event->Branch("subjfexP",&subjfexP); 
+  */
+
+
+
+  event->Branch("ak4ptC",&ak4ptC);
+  event->Branch("ak4etaC",&ak4etaC);
+  event->Branch("ak4phiC",&ak4phiC);
+  event->Branch("ak4eneC",&ak4eneC);
+  event->Branch("ak4CSVv2C",&ak4CSVv2C);
+  /*  
+  event->Branch("ak8subpt0ex",&ak8subpt0ex);
+  event->Branch("ak8subpt1ex",&ak8subpt1ex);
+  event->Branch("ak8subpt2ex",&ak8subpt2ex);
+
+  event->Branch("subindxex",&subindxex);
+  event->Branch("phoindxex",&phoindxex);
+  event->Branch("subjfex",&subjfex);
+
+  */
+
+
+
+  //MC photons
+  event->Branch("mcelept",&mcelept);
+  event->Branch("mcelephi",&mcelephi);
+  event->Branch("mceleeta",&mceleeta);
+
+  event->Branch("mctoppt",&mctoppt);
+  event->Branch("mctopphi",&mctopphi);
+  event->Branch("mctopeta",&mctopeta);
+
+  event->Branch("mcmuonpt",&mcmuonpt);
+  event->Branch("mcmuonphi",&mcmuonphi);
+  event->Branch("mcmuoneta",&mcmuoneta);
+  /*
+  event->Branch("mcphopt",&mcphopt);
+  event->Branch("mcphophi",&mcphophi);
+  event->Branch("mcphoeta",&mcphoeta);
+
+  event->Branch("mcchipt",&mcchipt);
+  event->Branch("mcchiphi",&mcchiphi);
+  event->Branch("mcchieta",&mcchieta);
+  */
+
+   
+
+  //Photons
+  event->Branch("phopt",&phopt);
+  event->Branch("phoE",&phoE);
+  event->Branch("phoeta",&phoeta);
+  event->Branch("phophi",&phophi);
+  event->Branch("phohoe",&phohoe);
+  event->Branch("phosieie",&phosieie);
+  event->Branch("phohaspixelseed",&phohaspixelseed);
+
+  event->Branch("muonpt",&muonpt);
+  event->Branch("muoneta",&muoneta);
+  event->Branch("muonphi",&muonphi);
+  event->Branch("muone",&muone);
+  event->Branch("muonisglobal",&muonisglobal);
+  event->Branch("muoniso04",&muoniso04);
+  event->Branch("muonisPF",&muonisPF);
+  event->Branch("muonisTight",&muonisTight);
+
+  event->Branch("metfullpt",&metfullpt); 
+  event->Branch("metfullphi",&metfullphi); 
+  event->Branch("metpuppipt",&metpuppipt); 
+  event->Branch("metpuppiphi",&metpuppiphi); 
+  
+
+}
+
+
+Analyzer::~Analyzer()
+{
+ 
+   // do anything here that needs to be done at desctruction time
+   // (e.g. close files, deallocate resources etc.)
+
+}
+
+
+//
+// member functions
+//
+
+// ------------ method called for each event  ------------
+void
+Analyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
+{
+   using namespace edm;
+
+   InputTag rhotag; 
+   InputTag genparticlestag; 
+
+   InputTag ak8etaCtag;
+   InputTag ak8phiCtag;
+   InputTag ak8eneCtag;
+   InputTag ak8ptCtag;
+   InputTag ak8t1Ctag;
+   InputTag ak8t3Ctag;
+   InputTag ak8sfmassCtag;
+   InputTag ak8prmassCtag;
+
+   
+   InputTag  ak8Cceftag;
+   InputTag  ak8Cchftag; 
+   InputTag  ak8Cchmtag;
+   InputTag  ak8Cnmtag;
+   InputTag  ak8Cchemftag;
+   InputTag  ak8Cjecf0tag;
+   InputTag  ak8CjecL3abstag;
+   InputTag  ak8CjecUncerttag;
+   InputTag  ak8Careatag;    
+   InputTag  ak8Cnemftag; 
+   InputTag  ak8Cnhftag; 
+   InputTag  ak8Cnnptag;
+
+   /*
+   InputTag ak8etaPtag;
+   InputTag ak8phiPtag;
+   InputTag ak8enePtag;
+   InputTag ak8ptPtag;
+   InputTag ak8t1Ptag;
+   InputTag ak8t3Ptag;
+   InputTag ak8sfmassPtag;
+   InputTag ak8prmassPtag;
+
+   InputTag  ak8Pceftag;
+   InputTag  ak8Pchftag; 
+   InputTag  ak8Pchmtag;
+   InputTag  ak8Pnmtag;
+   InputTag  ak8Pchemftag;
+   InputTag  ak8Pjecf0tag;
+   InputTag  ak8PjecL3abstag;
+   InputTag  ak8PjecUncerttag;
+   InputTag  ak8Pareatag;    
+   InputTag  ak8Pnemftag; 
+   InputTag  ak8Pnhftag; 
+   InputTag  ak8Pnnptag;
+   */
+
+   
+   InputTag ak8phoindxCtag;
+   InputTag ak8phosubjfCtag;   
+   InputTag ak8subindxCtag;   
+
+   //   InputTag ak8phoindxPtag;
+   //InputTag ak8phosubjfPtag;   
+
+   InputTag ak8subeta1tag; 
+   InputTag ak8subphi1tag; 
+   InputTag ak8subpt1tag; 
+   
+   InputTag ak8subeta2tag; 
+   InputTag ak8subphi2tag;
+   InputTag ak8subpt2tag;
+      
+   InputTag ak8subeta3tag; 
+   InputTag ak8subphi3tag;
+   InputTag ak8subpt3tag;
+   
+   InputTag ak4ptCtag;
+   InputTag ak4etaCtag;
+   InputTag ak4phiCtag;
+   InputTag ak4eneCtag;
+   InputTag ak4CSVv2tag;
+
+   InputTag  ak4Cceftag;
+   InputTag  ak4Cchftag; 
+   InputTag  ak4Cchmtag;
+   InputTag  ak4Cnmtag;
+   InputTag  ak4Cchemftag;
+   InputTag  ak4Cjecf0tag;
+   InputTag  ak4CjecL3abstag;
+   InputTag  ak4CjecUncerttag;
+   InputTag  ak4Careatag;    
+   InputTag  ak4Cnemftag; 
+   InputTag  ak4Cnhftag; 
+   InputTag  ak4Cnnptag;
+
+   InputTag phopttag;
+   InputTag phoEtag;
+   InputTag phoetatag;
+   InputTag phophitag;
+   InputTag phohoetag;
+   InputTag phosieietag;
+   InputTag phohaspixelseedtag;
+
+   InputTag mupttag;
+   InputTag muetatag;
+   InputTag muphitag;
+   InputTag muetag;
+   InputTag muisGlobaltag;
+   InputTag muisPFtag;
+   InputTag muisTighttag;
+   InputTag muIso04tag;
+
+   InputTag metfullpttag;
+   InputTag metfullphitag;
+
+   InputTag metpuppipttag;
+   InputTag metpuppiphitag;
+
+
+
+
+   /*
+   InputTag ak8spt1Ptag; 
+   InputTag ak8spt2Ptag; 
+   InputTag ak8spt3Ptag; 
+
+   InputTag ak8subpt0exPtag;
+   InputTag ak8subpt1exPtag;
+   InputTag ak8subpt2exPtag;
+
+   InputTag subindxexPtag;
+   InputTag phoindxexPtag;
+   InputTag subjfexPtag;
+   */
+
+
+
+   
+   // InputTag electronpttag;
+   // InputTag electronkeystag; 
+
+
+
+   
+   edm::Handle<double> rhohandle; 
+ 
+   edm::Handle< reco::GenParticleCollection > genparticleshandle; 
+
+   edm::Handle< vector<float> >  ak8etaChandle;
+   edm::Handle< vector<float> >  ak8phiChandle;
+   edm::Handle< vector<float> > ak8eneChandle;
+   edm::Handle< vector<float> > ak8ptChandle;
+   edm::Handle< vector<float> > ak8t1Chandle;
+   edm::Handle< vector<float> > ak8t3Chandle;
+   edm::Handle< vector<float> > ak8sfmassChandle;
+   edm::Handle< vector<float> > ak8prmassChandle;
+
+   edm::Handle< vector<float> >  ak8Ccefhandle;
+   edm::Handle< vector<float> >  ak8Cchfhandle; 
+   edm::Handle< vector<float> >  ak8Cchmhandle;
+   edm::Handle< vector<float> >  ak8Cnmhandle;
+   edm::Handle< vector<float> >  ak8Cchemfhandle;
+   edm::Handle< vector<float> >  ak8Cjecf0handle;
+   edm::Handle< vector<float> >  ak8CjecL3abshandle;
+   edm::Handle< vector<float> >  ak8CjecUncerthandle;
+   edm::Handle< vector<float> >  ak8Careahandle;    
+   edm::Handle< vector<float> >  ak8Cnemfhandle; 
+   edm::Handle< vector<float> >  ak8Cnhfhandle; 
+   edm::Handle< vector<float> >  ak8Cnnphandle;
+
+   /*
+   edm::Handle< vector<float> >  ak8etaPhandle;
+   edm::Handle< vector<float> >  ak8phiPhandle;
+   edm::Handle< vector<float> >  ak8enePhandle;
+   edm::Handle< vector<float> >  ak8ptPhandle;
+   edm::Handle< vector<float> >  ak8t1Phandle;
+   edm::Handle< vector<float> >  ak8t3Phandle;
+   edm::Handle< vector<float> >  ak8sfmassPhandle;
+   edm::Handle< vector<float> >  ak8prmassPhandle;
+
+   edm::Handle< vector<float> >  ak8Pcefhandle;
+   edm::Handle< vector<float> >  ak8Pchfhandle; 
+   edm::Handle< vector<float> >  ak8Pchmhandle;
+   edm::Handle< vector<float> >  ak8Pnmhandle;
+   edm::Handle< vector<float> >  ak8Pchemfhandle;
+   edm::Handle< vector<float> >  ak8Pjecf0handle;
+   edm::Handle< vector<float> >  ak8PjecL3abshandle;
+   edm::Handle< vector<float> >  ak8PjecUncerthandle;
+   edm::Handle< vector<float> >  ak8Pareahandle;    
+   edm::Handle< vector<float> >  ak8Pnemfhandle; 
+   edm::Handle< vector<float> >  ak8Pnhfhandle; 
+   edm::Handle< vector<float> >  ak8Pnnphandle;
+   */
+
+
+   // edm::Handle< vector<float> >  ak8phojetindxhandle;
+   edm::Handle< vector<float> >  ak8phoindxChandle;
+   edm::Handle< vector<float> >  ak8phosubjfChandle;
+   edm::Handle< vector<float> >  ak8subindxChandle;
+
+   edm::Handle< vector<float> >  ak8phoindxPhandle;
+   edm::Handle< vector<float> >  ak8phosubjfPhandle;
+
+
+   edm::Handle< vector<float> >  ak8subeta1handle; 
+   edm::Handle< vector<float> > ak8subphi1handle; 
+   edm::Handle< vector<float> > ak8subpt1handle; 
+   
+   edm::Handle< vector<float> > ak8subeta2handle; 
+   edm::Handle< vector<float> > ak8subphi2handle;
+   edm::Handle< vector<float> > ak8subpt2handle;
+      
+   edm::Handle< vector<float> > ak8subeta3handle; 
+   edm::Handle< vector<float> > ak8subphi3handle;
+   edm::Handle< vector<float> > ak8subpt3handle;
+
+
+
+
+
+   edm::Handle< vector<float> > ak4ptChandle;
+   edm::Handle< vector<float> > ak4etaChandle;
+   edm::Handle< vector<float> > ak4phiChandle;
+   edm::Handle< vector<float> > ak4eneChandle;
+   edm::Handle< vector<float> > ak4CSVv2Chandle;
+
+   //ak4 jet ID variables
+   edm::Handle< vector<float> >  ak4Ccefhandle;
+   edm::Handle< vector<float> >  ak4Cchfhandle; 
+   edm::Handle< vector<float> >  ak4Cchmhandle;
+   edm::Handle< vector<float> >  ak4Cnmhandle;
+   edm::Handle< vector<float> >  ak4Cchemfhandle;
+   edm::Handle< vector<float> >  ak4Cjecf0handle;
+   edm::Handle< vector<float> >  ak4CjecL3abshandle;
+   edm::Handle< vector<float> >  ak4CjecUncerthandle;
+   edm::Handle< vector<float> >  ak4Careahandle;    
+   edm::Handle< vector<float> >  ak4Cnemfhandle; 
+   edm::Handle< vector<float> >  ak4Cnhfhandle; 
+   edm::Handle< vector<float> >  ak4Cnnphandle;
+   
+   edm::Handle< vector<float> >  phopthandle;
+   edm::Handle< vector<float> >  phoEhandle;
+   edm::Handle< vector<float> >  phoetahandle;
+   edm::Handle< vector<float> >  phophihandle;
+   edm::Handle< vector<float> >  phohoehandle;
+   edm::Handle< vector<float> >  phosieiehandle;
+   edm::Handle< vector<float> >  phohaspixelseedhandle;
+
+
+   edm::Handle< vector<float> > mupthandle;
+   edm::Handle< vector<float> > muetahandle;
+   edm::Handle< vector<float> > muphihandle;
+   edm::Handle< vector<float> > muehandle;
+   edm::Handle< vector<float> > muisGlobalhandle;
+   edm::Handle< vector<float> > muisPFhandle;
+   edm::Handle< vector<float> > muisTighthandle;
+   edm::Handle< vector<float> > muIso04handle;
+
+
+   edm::Handle< vector<float> > metfullpthandle;
+   edm::Handle< vector<float> > metfullphihandle;
+
+   edm::Handle< vector<float> > metpuppipthandle;
+   edm::Handle< vector<float> > metpuppiphihandle;
+
+
+
+   /*
+   edm::Handle< vector<float> >  ak8spt1Phandle; 
+   edm::Handle< vector<float> >  ak8spt2Phandle; 
+   edm::Handle< vector<float> >  ak8spt3Phandle; 
+
+   edm::Handle< vector<float> >  ak8subpt0exPhandle;
+   edm::Handle< vector<float> >  ak8subpt1exPhandle;
+   edm::Handle< vector<float> >  ak8subpt2exPhandle;
+
+   edm::Handle< vector<int> > subindxexPhandle;
+   edm::Handle< vector<int> > phoindxexPhandle;
+   edm::Handle< vector<float> > subjfexPhandle;
+   */
+
+
+   //  edm::Handle< vector<float> >         electronpthandle;
+   //  edm::Handle< vector<vector<int> > >  electronkeyshandle; 
+
+
+   
+   iEvent.getByToken(rhoToken_,rhohandle);
+   
+   iEvent.getByToken(genpartsToken_,genparticleshandle);
+
+
+   iEvent.getByToken(ak8etaCToken_,ak8etaChandle);
+   iEvent.getByToken(ak8phiCToken_,ak8phiChandle);
+   iEvent.getByToken(ak8eneCToken_,ak8eneChandle);
+   iEvent.getByToken(ak8ptCToken_,ak8ptChandle);
+   iEvent.getByToken(ak8t1CToken_,ak8t1Chandle);
+   iEvent.getByToken(ak8t3CToken_,ak8t3Chandle);
+   iEvent.getByToken(ak8sfmassCToken_,ak8sfmassChandle);
+   iEvent.getByToken(ak8prmassCToken_,ak8prmassChandle);
+
+   iEvent.getByToken(ak8CcefToken_,ak8Ccefhandle);
+   iEvent.getByToken(ak8CchfToken_,ak8Cchfhandle); 
+   iEvent.getByToken(ak8CchmToken_, ak8Cchmhandle);
+   iEvent.getByToken(ak8CnmToken_, ak8Cnmhandle);
+   iEvent.getByToken(ak8CchemfToken_,ak8Cchemfhandle);
+   iEvent.getByToken(ak8Cjecf0Token_,ak8Cjecf0handle);
+   iEvent.getByToken(ak8CjecL3absToken_,ak8CjecL3abshandle);
+   iEvent.getByToken(ak8CjecUncertToken_,ak8CjecUncerthandle);
+   iEvent.getByToken(ak8CareaToken_,ak8Careahandle);    
+   iEvent.getByToken(ak8CnemfToken_,ak8Cnemfhandle); 
+   iEvent.getByToken(ak8CnhfToken_,ak8Cnhfhandle); 
+   iEvent.getByToken(ak8CnnpToken_,ak8Cnnphandle);
+
+   /*
+   iEvent.getByToken(ak8etaPToken_,ak8etaPhandle);
+   iEvent.getByToken(ak8phiPToken_,ak8phiPhandle);
+   iEvent.getByToken(ak8enePToken_,ak8enePhandle);
+   iEvent.getByToken(ak8ptPToken_,ak8ptPhandle);
+   iEvent.getByToken(ak8t1PToken_,ak8t1Phandle);
+   iEvent.getByToken(ak8t3PToken_,ak8t3Phandle);
+   iEvent.getByToken(ak8sfmassPToken_,ak8sfmassPhandle);
+   iEvent.getByToken(ak8prmassPToken_,ak8prmassPhandle);
+
+   iEvent.getByToken(ak8PcefToken_,ak8Pcefhandle);
+   iEvent.getByToken(ak8PchfToken_,ak8Pchfhandle); 
+   iEvent.getByToken(ak8PchmToken_, ak8Pchmhandle);
+   iEvent.getByToken(ak8PnmToken_, ak8Pnmhandle);
+   iEvent.getByToken(ak8PchemfToken_,ak8Pchemfhandle);
+   iEvent.getByToken(ak8Pjecf0Token_,ak8Pjecf0handle);
+   iEvent.getByToken(ak8PjecL3absToken_,ak8PjecL3abshandle);
+   iEvent.getByToken(ak8PjecUncertToken_,ak8PjecUncerthandle);
+   iEvent.getByToken(ak8PareaToken_,ak8Pareahandle);    
+   iEvent.getByToken(ak8PnemfToken_,ak8Pnemfhandle); 
+   iEvent.getByToken(ak8PnhfToken_,ak8Pnhfhandle); 
+   iEvent.getByToken(ak8PnnpToken_,ak8Pnnphandle);
+   */
+   ///   iEvent.getByToken(ak8phojetindxToken_,ak8phojetindxhandle); 
+   iEvent.getByToken(ak8phoindxCToken_,ak8phoindxChandle); 
+   iEvent.getByToken(ak8phosubjfCToken_,ak8phosubjfChandle); 
+   iEvent.getByToken(ak8subindxCToken_,ak8subindxChandle); 
+   
+   //   iEvent.getByToken(ak8phoindxPToken_,ak8phoindxPhandle); 
+   // iEvent.getByToken(ak8phosubjfPToken_,ak8phosubjfPhandle); 
+
+   
+
+   iEvent.getByToken(ak8subeta1Token_,ak8subeta1handle);
+   iEvent.getByToken(ak8subphi1Token_,ak8subphi1handle);
+   iEvent.getByToken(ak8subpt1Token_,ak8subpt1handle);
+
+   iEvent.getByToken(ak8subeta2Token_,ak8subeta2handle);
+   iEvent.getByToken(ak8subphi2Token_,ak8subphi2handle);
+   iEvent.getByToken(ak8subpt2Token_,ak8subpt2handle);
+
+   iEvent.getByToken(ak8subeta3Token_,ak8subeta3handle);
+   iEvent.getByToken(ak8subphi3Token_,ak8subphi3handle);
+   iEvent.getByToken(ak8subpt3Token_,ak8subpt3handle);
+
+    
+   iEvent.getByToken(ak4ptCToken_,ak4ptChandle);
+   iEvent.getByToken(ak4etaCToken_,ak4etaChandle);
+   iEvent.getByToken(ak4phiCToken_,ak4phiChandle);
+   iEvent.getByToken(ak4eneCToken_,ak4eneChandle);
+   iEvent.getByToken(ak4CSVv2CToken_,ak4CSVv2Chandle);
+
+   iEvent.getByToken(ak4CcefToken_,ak4Ccefhandle);
+   iEvent.getByToken(ak4CchfToken_,ak4Cchfhandle); 
+   iEvent.getByToken(ak4CchmToken_, ak4Cchmhandle);
+   iEvent.getByToken(ak4CnmToken_, ak4Cnmhandle);
+   iEvent.getByToken(ak4CchemfToken_,ak4Cchemfhandle);
+   iEvent.getByToken(ak4Cjecf0Token_,ak4Cjecf0handle);
+   iEvent.getByToken(ak4CjecL3absToken_,ak4CjecL3abshandle);
+   iEvent.getByToken(ak4CjecUncertToken_,ak4CjecUncerthandle);
+   iEvent.getByToken(ak4CareaToken_,ak4Careahandle);    
+   iEvent.getByToken(ak4CnemfToken_,ak4Cnemfhandle); 
+   iEvent.getByToken(ak4CnhfToken_,ak4Cnhfhandle); 
+   iEvent.getByToken(ak4CnnpToken_,ak4Cnnphandle);
+   
+   iEvent.getByToken(phoptToken_,phopthandle);
+   iEvent.getByToken(phoEToken_,phoEhandle);
+   iEvent.getByToken(phoetaToken_,phoetahandle);
+   iEvent.getByToken(phophiToken_,phophihandle);
+   iEvent.getByToken(phohoeToken_,phohoehandle);
+   iEvent.getByToken(phosieieToken_,phosieiehandle);
+   iEvent.getByToken(phohaspixelseedToken_,phohaspixelseedhandle);
+
+   iEvent.getByToken(muonptToken_,mupthandle);
+   iEvent.getByToken(muonPhiToken_,muphihandle);
+   iEvent.getByToken(muonetaToken_,muetahandle);
+   iEvent.getByToken(muonEToken_,muehandle);
+   iEvent.getByToken(muonisGlobalToken_,muisGlobalhandle);
+   iEvent.getByToken(muonIso04Token_,muIso04handle);
+   iEvent.getByToken(muonIsPFToken_,muisPFhandle);
+   iEvent.getByToken(muonIsTightToken_,muisTighthandle);
+
+   iEvent.getByToken(metfullptToken_,metfullpthandle);
+   iEvent.getByToken(metfullphiToken_,metfullphihandle);
+   iEvent.getByToken(metpuppiptToken_,metpuppipthandle);
+   iEvent.getByToken(metpuppiphiToken_,metpuppiphihandle);
+
+
+   /*
+   iEvent.getByToken(ak8spt1PToken_,ak8spt1Phandle); 
+   iEvent.getByToken(ak8spt2PToken_,ak8spt2Phandle); 
+   iEvent.getByToken(ak8spt3PToken_,ak8spt3Phandle); 
+   
+   iEvent.getByToken(ak8subpt0exPToken_,ak8subpt0exPhandle);
+   iEvent.getByToken(ak8subpt1exPToken_,ak8subpt1exPhandle);
+   iEvent.getByToken(ak8subpt2exPToken_,ak8subpt2exPhandle);
+   
+   iEvent.getByToken(subindxexPToken_,subindxexPhandle);
+   iEvent.getByToken(phoindxexPToken_,phoindxexPhandle);
+   iEvent.getByToken(subjfexPToken_,subjfexPhandle);
+   */
+
+
+
+   //  iEvent.getByToken(electronptToken_,electronpthandle);
+   //  iEvent.getByToken(electronkeysToken_,electronkeyshandle);
+
+   
+   //clean vectors
+
+   
+   ak8etaC.clear(); 
+   ak8phiC.clear(); 
+   ak8ptC.clear(); 
+   ak8eneC.clear(); 
+   ak8sfMassC.clear();
+   ak8prMassC.clear();
+   ak8t3t1C.clear();
+   ak8subjC.clear(); 
+   ak8phoindxC.clear();
+   ak8subindxC.clear();
+
+
+   /*
+   ak8etaP.clear(); 
+   ak8phiP.clear(); 
+   ak8ptP.clear(); 
+   ak8eneP.clear(); 
+   ak8sfMassP.clear();
+   ak8prMassP.clear();
+   ak8t3t1P.clear();
+   ak8subjP.clear(); 
+   ak8phoindxP.clear();
+   */
+
+
+   /*   ak8phiC.clear(); 
+   ak8ptC.clear(); 
+   ak8eneC.clear(); 
+   
+   ak8hasphoC.clear();
+   ak8phosubjC.clear();
+   ak8phosieC.clear();
+   ak8phoptC.clear();
+   ak8phoetaC.clear();
+   ak8phohoeC.clear();
+   ak8phoseedC.clear();
+   ak8isLooseC.clear();
+   ak8isTightC.clear();
+
+   */
+   
+   ak8seta1.clear();
+   ak8seta2.clear();
+   ak8seta3.clear();
+   ak8sphi1.clear();
+   ak8sphi2.clear();
+   ak8sphi3.clear();
+   ak8spt1.clear();
+   ak8spt2.clear();
+   ak8spt3.clear();
+  
+   /*
+   ak8t3t1C.clear();
+   ak8t3t1P.clear();
+
+   
+   ak8etaP.clear(); 
+   ak8phiP.clear(); 
+   ak8ptP.clear(); 
+   ak8eneP.clear(); 
+
+   ak8sfMassP.clear();
+   ak8prMassP.clear();
+
+   ak8sfMassC.clear();
+   ak8prMassC.clear();
+
+   ak8MassP.clear();
+   ak8MassC.clear();
+   */
+
+   
+   ak4ptC.clear();
+   ak4etaC.clear();
+   ak4phiC.clear();
+   ak4eneC.clear();
+   ak4CSVv2C.clear();
+
+
+
+
+
+
+   //MCphotons   
+   mcelept.clear(); 
+   mcelephi.clear(); 
+   mceleeta.clear(); 
+
+   mcmuonpt.clear(); 
+   mcmuonphi.clear(); 
+   mcmuoneta.clear(); 
+  
+   /*
+   mcphopt.clear(); 
+   mcphophi.clear(); 
+   mcphoeta.clear(); 
+
+   mcchipt.clear(); 
+   mcchiphi.clear(); 
+   mcchieta.clear(); 
+   */
+ 
+
+  
+   //Photons
+   phopt.clear();
+   phoE.clear();
+   phoeta.clear();
+   phophi.clear();
+   phohoe.clear();
+   phosieie.clear();
+   phohaspixelseed.clear();
+
+   muonpt.clear();
+   muoneta.clear();
+   muonphi.clear();
+   muone.clear();
+   muonisglobal.clear();
+   muoniso04.clear();
+   muonisPF.clear();
+   muonisTight.clear();
+
+
+
+   mctoppt.clear();
+   mctopeta.clear();
+   mctopphi.clear();
+
+
+
+   metfullpt.clear();
+   metfullphi.clear();
+
+   metpuppipt.clear();
+   metpuppiphi.clear();
+
+
+   
+   //Initialize event varibles
+   NJ    = 0; 
+   HTak4 = 0; 
+   isdgam = 0; 
+
+
+
+
+   rho = (*rhohandle.product());
+   if( fabs(rho) >   1000 ) rho = -1;  
+
+ 
+
+   // loop over gen particles!!! 
+   // int igluis = 0; 
+   int isneu = 0; 
+   int ischg = 0; 
+   // for(int iprr = 0; iprr < 10; iprr++) cout<<"   -------    new event!!!!"<<endl;
+   cout<<"   -------    new event!!!!"<<endl;  
+   for(size_t i = 0; i < genparticleshandle->size(); ++i){
+     const reco::GenParticle& p = (*genparticleshandle)[i];
+
+     int momId = p.numberOfMothers() ? p.mother()->pdgId() : 0;
+     int gmomId = -1; 
+     int ggmomId = -1; 
+     if( p.numberOfMothers() ){
+       const reco::Candidate *  pm = p.mother();  // (*genparticleshandle)[i];
+       gmomId = pm->numberOfMothers() ? pm->mother()->pdgId() : 0 ;
+
+       if( pm->numberOfMothers()){
+	 const reco::Candidate *  gpm = pm->mother();
+	 ggmomId = gpm->numberOfMothers() ? gpm->mother()->pdgId() : 0 ;
+
+       }
+     }		 
+     //std::cout<<i<<" id="<<p.pdgId()<<" ("<<p.status()<<") mom="<<momId<<", daughters=";
+     // for(size_t j = 0, n=p.numberOfDaughters(); j<n; ++j) std::cout<<p.daughter(j)->pdgId()<<(j+1<n?", ":"\n");
+     
+     
+     //cout<<" mass "<<p.mass()<<" id "<<p.pdgId()<<" "<<momId<<endl;
+     
+					 /*
+     if(p.pdgId() == 3000001 && (p.mass() > 101 || p.mass() < 99) ){ 
+       cout<<" --------------------------"<<endl;
+       cout<<"multiple masses singlino :"<<p.mass() <<" mom "<<momId<<" part  "<<p.pdgId()<<endl;
+
+     }
+     if(p.pdgId() == 3000002 && (p.mass() > 91 || p.mass() < 89) ) cout<<"multiple masses signlet: "<<p.mass()<<" mom "<<momId<<" part  "<<p.pdgId()<<endl;
+
+
+     if(  p.pdgId() == 1000022 && momId == 1000021 ) mcchimass = p.mass();
+     if(  p.pdgId() == 1000021 )                     mcglumass = p.mass();
+
+     if( p.pdgId() == 1000022 && momId == 1000021  )       isneu++;
+     if( fabs(p.pdgId()) == 1000024 && momId == 1000021  ) ischg++;
+
+					 */
+     
+
+     //     if(fabs(p.pdgId()) == 11 && fabs(momId) == 24) {
+     //  cout<<gmomId<<" ggmom "<< ggmomId<<endl;
+
+
+     //}
+
+     if( fabs(p.pdgId()) == 6 ) {
+       float ppt = p.pt();     
+       float peta = p.eta();
+       float pphi = p.phi();
+
+       //cout<<"top pt: "<<ppt<<" eta: "<<peta<<" phi: "<<pphi<<endl;
+       // for(size_t j = 0, n=p.numberOfDaughters(); j<n; ++j) std::cout<<p.daughter(j)->pdgId()<<(j+1<n?", ":"\n");
+     
+       mctoppt.push_back(ppt);
+       mctopeta.push_back(peta);
+       mctopphi.push_back(pphi);
+
+
+     }
+ 
+
+
+     if( fabs(p.pdgId()) == 11 &&( ( fabs(momId) == 24  && fabs(gmomId) == 6 ) ||  ( fabs(momId) == 24  && fabs(gmomId) == 24  && fabs(ggmomId) == 6 )  ) ){
+       float ppt = p.pt();     
+       float peta = p.eta();
+       float pphi = p.phi();
+
+       //cout<<"ele pt: "<<ppt<<" eta: "<<peta<<" phi: "<<pphi<<endl;
+      
+
+       mcelept.push_back(ppt); 
+       mcelephi.push_back(pphi); 
+       mceleeta.push_back(peta);       
+
+     }
+
+
+
+     if( fabs(p.pdgId()) == 13 &&( ( fabs(momId) == 24  && fabs(gmomId) == 6 ) ||  ( fabs(momId) == 24  && fabs(gmomId) == 24  && fabs(ggmomId) == 6 )  ) ){
+
+       float ppt = p.pt();     
+       float peta = p.eta();
+       float pphi = p.phi();
+
+       cout<<"muon pt: "<<ppt<<" eta: "<<peta<<" phi: "<<pphi<<endl;
+      
+
+       mcmuonpt.push_back(ppt); 
+       mcmuonphi.push_back(pphi); 
+       mcmuoneta.push_back(peta);       
+
+     }
+
+
+
+
+     /*
+     if(p.pdgId() == 1000022 &&  momId == 1000021 ){
+       float ppt = p.pt();     
+       float peta = p.eta();
+       float pphi = p.phi();
+
+       mcchipt.push_back(ppt); 
+       mcchiphi.push_back(pphi); 
+       mcchieta.push_back(peta);       
+     }
+
+     if( p.pdgId() == 22 &&  momId == 1000022){
+       float ppt = p.pt();     
+       float peta = p.eta();
+       float pphi = p.phi();
+
+       mcphopt.push_back(ppt); 
+       mcphophi.push_back(pphi); 
+       mcphoeta.push_back(peta); 
+     
+     }
+     */
+
+   }
+
+  
+   //if( igluis == 0 ) cout<<"!!!!!!!!!!!!!!!!!"<<endl;
+   if(isneu > 0 && ischg ==  0 ) isdgam =1; 
+ 
+
+   //Construct the original ak8 jet pf the photon jets
+ 
+   /*
+   vector<float> phoJeta; 
+   vector<float> phoJphi; 
+   vector<float> phoJpt; 
+
+   phoJeta.push_back(0);
+   phoJphi.push_back(0);
+   phoJpt.push_back(0);
+   phoJeta.clear();
+   phoJphi.clear();
+   phoJpt.clear();
+   
+   for(uint iphoj = 0; iphoj < (*ak8phojetindxhandle).size(); iphoj++){
+     
+     
+
+
+
+
+     TVector3 sub1,sub2,sub3,phosub; 
+     sub1.SetPtEtaPhi(pt1,eta1,phi1);
+     sub2.SetPtEtaPhi(pt2,eta2,phi2);
+     sub3.SetPtEtaPhi(pt3,eta3,phi3);
+     
+     phosub = sub1 + sub2; 
+     phosub = phosub +sub3; 
+
+     float ptjp  = phosub.Perp(); 
+    
+
+     float etajp = 0; 
+     float phijp = 0; 
+     if(ptjp != 0){ 
+       etajp = phosub.Eta();
+       phijp = phosub.Phi(); 
+     }
+     
+     
+     (phoJpt).push_back(ptjp);
+     (phoJeta).push_back(etajp);
+     (phoJphi).push_back(phijp);
+
+
+   }
+   */
+
+
+   //Loop over AK8jets
+   for(uint iak8 = 0; iak8 < (*ak8ptChandle).size(); iak8++){
+     float pt  = (*ak8ptChandle)[iak8]; 
+     float eta = (*ak8etaChandle)[iak8];
+
+     
+     if( pt < 20)          continue;
+     if( fabs(eta) > 2.5 ) continue;
+     
+     
+
+
+     float nhf  = (*ak8Cnhfhandle)[iak8]; 
+     float nemf = (*ak8Cnemfhandle)[iak8]; 
+     float chf = (*ak8Cchfhandle)[iak8]; 
+     float chm = (*ak8Cchmhandle)[iak8]; 
+     float nm  = (*ak8Cnmhandle)[iak8];
+     float cef = (*ak8Ccefhandle)[iak8]; 
+     int   nnp = (*ak8Cnhfhandle)[iak8]; 
+    
+     bool passjid = PassJetID(eta,nhf,nemf,nm,chf,chm,cef,nnp);
+     if(passjid != 1) continue;
+
+     if(pt > 200 && fabs(eta)  < 2.5 ) NJ++; 
+     
+     float subjf   = (*ak8phosubjfChandle)[iak8];
+     int   phoindx = (*ak8phoindxChandle)[iak8];
+
+
+
+     
+     //jet selection
+     float phi = (*ak8phiChandle)[iak8];
+     float ene = (*ak8eneChandle)[iak8];
+     float sfmass = (*ak8sfmassChandle)[iak8];
+     float prmass = (*ak8prmassChandle)[iak8];
+        
+     float t1     = (*ak8t1Chandle)[iak8];
+     float t3     = (*ak8t3Chandle)[iak8];
+     
+     
+     /*
+     int   haspho  = -99;
+     float phosubj = -99;
+     float phopt   = -99;
+     float phophi  = -99;
+     float phoeta  = -99;
+     float phohoe  = -99;
+     float phoseed = -99;
+     float phosie  = -99;
+    
+     int   isLoose = 0;
+     int   isTight = 0;
+     
+     
+     // Check for photonJets
+     for(uint iphoj = 0; iphoj < (*ak8phojetindxhandle).size(); iphoj++){
+       float DR = deltaR(eta,phi,(phoJeta)[iphoj],(phoJphi)[iphoj]);
+       float jphopt = (phoJpt)[iphoj];
+       float diffpt = fabs(pt  - jphopt )/pt; 
+       
+       
+
+       if( diffpt   < 0.01 && DR < 0.001 ){
+	 uint ip = (*ak8phoindxhandle)[iphoj];
+	 if((*ak8phoindxhandle)[iphoj] != -99 ) {
+	   haspho = 1; 
+	   phosubj  = (*ak8phosubjfhandle)[iphoj]; 
+	   phopt    = (*phopthandle)[ip]; 
+	   phoeta   = (*phoetahandle)[ip]; 
+	   phophi   = (*phophihandle)[ip]; 
+	   phohoe   = (*phohoehandle)[ip];
+	   phoseed  = (*phohaspixelseedhandle)[ip];
+	   phosie = (*phosieiehandle)[ip];
+	   
+	 }
+       }  	   
+       
+     }
+     */
+     
+     //Filling subjets
+     float eta1 = (*ak8subeta1handle)[iak8]; 
+     float eta2 = (*ak8subeta2handle)[iak8]; 
+     float eta3 = (*ak8subeta3handle)[iak8]; 
+     
+     float phi1 = (*ak8subphi1handle)[iak8]; 
+     float phi2 = (*ak8subphi2handle)[iak8]; 
+     float phi3 = (*ak8subphi3handle)[iak8]; 
+     
+     float pt1 = (*ak8subpt1handle)[iak8]; 
+     float pt2 = (*ak8subpt2handle)[iak8]; 
+     float pt3 = (*ak8subpt3handle)[iak8]; 
+
+     //if(pt1 == -99 || pt2 == -99 || pt3 == -99 ) continue;
+
+         
+     (ak8seta1).push_back(eta1); 
+     (ak8seta2).push_back(eta2);
+     (ak8seta3).push_back(eta3);
+     (ak8sphi1).push_back(phi1);
+     (ak8sphi2).push_back(phi2);
+     (ak8sphi3).push_back(phi3);
+     (ak8spt1).push_back(pt1); 
+     (ak8spt2).push_back(pt2); 
+     (ak8spt3).push_back(pt3);
+     
+     float subindx = (*ak8subindxChandle)[iak8];
+
+
+         
+     ak8etaC.push_back(eta); 
+     ak8phiC.push_back(phi); 
+     ak8ptC.push_back(pt);
+     ak8eneC.push_back(ene); 
+     ak8sfMassC.push_back(sfmass);
+     ak8prMassC.push_back(prmass);
+     ak8t3t1C.push_back(t3/t1);
+ 
+     ak8subjC.push_back(subjf);
+     ak8phoindxC.push_back(phoindx);
+     ak8subindxC.push_back(subindx);
+   }
+
+
+   //Loop over Pupi jets    
+   /*
+   for(uint iak8 = 0; iak8 < (*ak8ptPhandle).size(); iak8++){
+     float pt  = (*ak8ptPhandle)[iak8];
+     float eta = (*ak8etaPhandle)[iak8];
+     
+     if( pt < 20)          continue;
+     if( fabs(eta) > 2.5 ) continue;
+     
+     
+     float nhf  = (*ak8Pnhfhandle)[iak8]; 
+     float nemf = (*ak8Pnemfhandle)[iak8]; 
+     float chf = (*ak8Pchfhandle)[iak8]; 
+     float chm = (*ak8Pchmhandle)[iak8]; 
+     float nm  = (*ak8Pnmhandle)[iak8];
+     float cef = (*ak8Pcefhandle)[iak8]; 
+     int   nnp = (*ak8Pnhfhandle)[iak8]; 
+     
+
+     bool passjid = PassJetID(eta,nhf,nemf,nm,chf,chm,cef,nnp);
+     if(passjid != 1) continue;
+     
+     //float subjf   = (*ak8phoindxPhandle)[iak8];
+     //int phoindx = (*ak8phoindxPhandle)[iak8];
+
+     float phi = (*ak8phiPhandle)[iak8];
+     float ene = (*ak8enePhandle)[iak8];
+
+     float t1     = (*ak8t1Phandle)[iak8];
+     float t3     = (*ak8t3Phandle)[iak8];
+
+     float sfmass = (*ak8sfmassPhandle)[iak8];
+     float prmass = (*ak8prmassPhandle)[iak8];
+   
+     ak8ptP.push_back(pt);
+     ak8etaP.push_back(eta);
+     ak8phiP.push_back(phi);
+     ak8eneP.push_back(ene);
+     ak8t3t1P.push_back(t3/t1);
+
+     ak8subjP.push_back(-1);
+     ak8phoindxP.push_back(0);
+     
+     ak8sfMassP.push_back(sfmass);
+     ak8prMassP.push_back(prmass);
+     
+   }
+   */
+   
+   
+   //Loop over AK4 jets 
+   for(uint iak4 = 0; iak4 < (*ak4ptChandle).size(); iak4++){
+     float pt  = (*ak4ptChandle)[iak4];
+     float eta = (*ak4etaChandle)[iak4];
+        
+     if(pt < 20  ) continue; 
+     if(fabs(eta) > 2.5) continue;
+    
+     //jet id selections
+     float nhf  = (*ak4Cnhfhandle)[iak4]; 
+     float nemf = (*ak4Cnemfhandle)[iak4]; 
+     float chf = (*ak4Cchfhandle)[iak4]; 
+     float chm = (*ak4Cchmhandle)[iak4]; 
+     float nm  = (*ak4Cnmhandle)[iak4];
+     float cef = (*ak4Ccefhandle)[iak4]; 
+     int   nnp = (*ak4Cnhfhandle)[iak4]; 
+    
+     bool passjid = PassJetID(eta,nhf,nemf,nm,chf,chm,cef,nnp);
+     if(passjid != 1) continue;
+     float ene = (*ak4eneChandle)[iak4];
+     float csvv2 = (*ak4CSVv2Chandle)[iak4];
+     float phi = (*ak4phiChandle)[iak4];
+     HTak4 += pt;  
+     ak4ptC.push_back(pt);
+     ak4etaC.push_back(eta);
+     ak4phiC.push_back(phi);
+     ak4eneC.push_back(ene);
+     ak4CSVv2C.push_back(csvv2);
+   }
+   
+
+
+   //Loop over photons
+   for(uint iph = 0; iph < (*phopthandle).size();iph ++){
+     float pt  = (*phopthandle)[iph]; 
+     float eta = (*phoetahandle)[iph]; 
+
+     if(pt < 15)         continue;
+     if(fabs(eta) > 2.5) continue; 
+     
+     float sieie = (*phosieiehandle)[iph]; 
+     float phi   = (*phophihandle)[iph]; 
+     float hoe   = (*phohoehandle)[iph]; 
+     float ene   = (*phoEhandle)[iph];
+     int   haspixelseed = (*phohaspixelseedhandle)[iph]; 
+     
+     phopt.push_back(pt);
+     phoE.push_back(ene);
+     phoeta.push_back(eta);
+     phophi.push_back(phi);
+     phohoe.push_back(hoe);
+     phosieie.push_back(sieie);
+     phohaspixelseed.push_back(haspixelseed);
+   }
+
+   for(uint imu = 0; imu < (*mupthandle).size();imu ++){
+     float pt  = (*mupthandle)[imu];
+     float eta = (*muetahandle)[imu];
+     float phi = (*muphihandle)[imu];
+     float een = (*muehandle)[imu];
+
+     float isglobal =  (*muisGlobalhandle)[imu];
+     float ispf     = (*muisPFhandle)[imu];
+     float iso04    = (*muIso04handle)[imu];
+     float istight  = (*muisTighthandle)[imu];
+
+     muonpt.push_back(pt);
+     muoneta.push_back(eta);
+     muonphi.push_back(phi);
+     muone.push_back(een);
+     muonisglobal.push_back(isglobal);
+     muoniso04.push_back(iso04);
+     muonisPF.push_back(ispf);
+     muonisTight.push_back(istight);
+   }
+
+   
+   for(uint imet= 0; imet < (*metfullpthandle).size(); imet++){
+     float phi = (*metfullphihandle)[imet];
+     float pt  = (*metfullpthandle)[imet];
+     metfullpt.push_back(pt);
+     metfullphi.push_back(phi);
+   }
+   
+   for(uint imet= 0; imet < (*metpuppipthandle).size(); imet++){
+     float phi = (*metpuppiphihandle)[imet];
+     float pt  = (*metpuppipthandle)[imet];
+     metpuppipt.push_back(pt);
+     metpuppiphi.push_back(phi);
+   }    
+
+   //  if(isdgam ){
+   event->Fill();
+
+   // }
+
+}
+
+
+// ------------ method called once each job just before starting event loop  ------------
+void 
+Analyzer::beginJob()
+{
+}
+
+// ------------ method called once each job just after ending the event loop  ------------
+void 
+Analyzer::endJob() 
+{
+}
+
+// ------------ method fills 'descriptions' with the allowed parameters for the module  ------------
+void
+Analyzer::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
+  //The following says we do not know what parameters are allowed so do no validation
+  // Please change this to state exactly what you do use, even if it is no parameters
+  edm::ParameterSetDescription desc;
+  desc.setUnknown();
+  descriptions.addDefault(desc);
+}
+
+bool Analyzer::JetIsLoose(float t3t1 , int noseed, int haspho , float eta, float hoe, float sie){
+
+  if(haspho == -99)return 0; 
+  if(t3t1 < 0.4 && haspho == 1 && noseed == 1 && hoe < 0.05 && ( ( fabs(eta) > 1.4789 && sie < 0.0274 )||( fabs(eta) < 1.4789 && sie < 0.0102 ) ) ){
+ 
+
+   return 1;
+  }else{
+    return 0;
+  }
+
+
+}
+
+bool Analyzer::JetIsTight(float t3t1 ,int noseed, int haspho ,float eta, float hoe, float sie, float subf){
+  
+  if(haspho == -99 ) return 0; 
+  if(t3t1 < 0.4 && haspho == 1  && subf > 0.8 && noseed == 1  && hoe < 0.05 && ( ( fabs(eta) > 1.4789 && sie < 0.0274 )||( fabs(eta) < 1.4789 && sie < 0.0102 ) ) ){
+    return 1;
+  }else{
+    return 0;
+  }
+}
+
+
+bool Analyzer::PassJetID( float eta, float nhf, float nemf,int nm, float chf, int chm, float cef, int nnp){
+
+  //working points implemented are loose from this twiki: 
+  //https://twiki.cern.ch/twiki/bin/view/CMS/JetID13TeVRun2016
+
+  int ncon = chm+nm; 
+  if( fabs(eta) < 2.7 ){
+    if( nhf < 0.99 && nemf < 0.9 && ncon > 1){
+    
+      if(fabs(eta)  < 2.4){
+	if( chf > 0 && chm > 0 && cef < 0.99 ){
+	  return 1; 
+
+	}else{
+	  return 0; 
+	}
+      }else{
+	return 1;
+      }
+      return 1; 
+    }else{
+	return 0; 
+    }
+  }
+  if(fabs(eta) > 2.7 && fabs(eta) < 3.0){
+    
+    if( nemf > 0.01 && nhf < 0.98 && nnp > 2 ){
+      return 1; 
+    }else{
+      return 0; 
+    }
+  }
+  
+  if(fabs(eta) > 3.0 ) {
+    if(nhf < 0.90 && nnp > 10 ){
+      return 1; 
+    }else {
+      return 0; 
+    }
+  }
+
+  return 0;
+
+
+}
+
+
+
+//define this as a plug-in
+DEFINE_FWK_MODULE(Analyzer);

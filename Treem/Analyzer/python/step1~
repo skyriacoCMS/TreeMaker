@@ -1,0 +1,26 @@
+#!/bin/bash
+
+
+echo ""
+echo "CMSSW on Condor"
+echo ""
+
+source /cvmfs/cms.cern.ch/cmsset_default.sh
+tar -xvf TreeM.tgz
+rm TreeM.tgz
+export SCRAM_ARCH=slc6_amd64_gcc530
+cd CMSSW_8_0_24_patch1/src
+
+scramv1 b -j 100
+cd Treem/Analyzer/python/
+
+eval `scramv1 runtime -sh`
+echo "about to run...\n"
+cmsenv 
+cmsRun ConfFile_cfg.py $1 $2 
+xrdcp $2 $3
+rm $2
+
+cd ${_CONDOR_SCRATCH_DIR}
+rm -rf CMSSW_8_0_24_patch1
+

@@ -1,0 +1,21 @@
+universe = vanilla
+Executable = ./datasingle 
+Requirements =
+Should_Transfer_Files =  YES
+WhenToTransferOutput = ON_EXIT
+Transfer_Input_Files = dataSingle,RunList.py,ConfFile_cfg.py,TreeM.tgz,InpOut.txt
+Output = ./dataS/$(Process).out
+Error = ./dataS/$(Process).err
+Log = ./dataS/$(Process).log
+notify_user = skyria@FNAL.GOV
+use_x509userproxy = true
+Arguments=$(Process)
+
+#Arguments = root://cmseos.fnal.gov//store/user/skyria/SingleMuon/Run2016B-03Feb2017_ver2-v2_B2GAnaFW_80X_V3p2RUNB/171018_152617/B2GEDMNtuple_$(Process).root ./output_$(Process).root root://cmseos.fnal.gov//store/user/skyria/Stealth_13/DATAB/$(Process)_tree.root
+
+Queue 65
+
+
+
+
+

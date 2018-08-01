@@ -1,0 +1,19 @@
+universe = vanilla
+Executable = ./step1
+Requirements =
+Should_Transfer_Files =  YES
+WhenToTransferOutput = ON_EXIT
+Transfer_Input_Files = step1,ConfFile_cfg.py,CMSSW_8024.tgz 
+Output = ./DATAB/$(Process).out
+Error = ./DATAB/$(Process).err
+Log = ./DATAB/$(Process).log
+notify_user = skyria@FNAL.GOV
+use_x509userproxy = true
+Arguments = root://cmseos.fnal.gov//eos/uscms/store/user/skyria/Stealth_13/Feb17/TTB/B2Gv3/$(Process)_b2gNtuple_ttbmc.root  ./output_$(Process).root root://cmseos.fnal.gov//eos/uscms/store/user/skyria/Stealth_13/Feb17/TTB/B2Gv3/Trees/$(Process)_tree.root
+
+Queue 1000
+
+
+
+
+
