@@ -1,0 +1,5 @@
+*.jcl
+*.log
+*.err
+*.out
+*.tgz
